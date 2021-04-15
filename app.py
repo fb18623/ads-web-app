@@ -11,11 +11,11 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 app.layout = html.Div([
-    html.H2('Hello World'),
+    html.H2('UK COVID-19 Twitter Sentiment'),
     dcc.Dropdown(
         id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
-        value='LA'
+        options=[{'label': i, 'value': i} for i in ['England', 'Wales', 'Scotland']],
+        value='England'
     ),
     html.Div(id='display-value')
 ])

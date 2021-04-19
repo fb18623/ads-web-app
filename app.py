@@ -15,11 +15,11 @@ server = app.server
 app.title = 'Sentiment Towards Lockdown in the UK'
 
 app.layout = html.Div([
-    html.H2('UK COVID-19 Twitter Sentiment GitHub'),
+    html.H2('UK COVID-19 Twitter Sentiment GitHuob'),
     dcc.Dropdown(
         id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['England', 'Wales', 'Scotland']],
-        value='England'
+        options=[{'label': i, 'value': i} for i in ['Lockdown', 'Covid']],
+        value='Lockdown'
     ),
     html.Div(id='display-value')
 ])

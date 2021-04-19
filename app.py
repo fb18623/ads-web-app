@@ -12,10 +12,10 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.title = 'Sentiment Towards Lockdown in the UK'
+app.title = 'Sentiment Towards Lockdown in the UK git test'
 
 app.layout = html.Div([
-    html.H2('UK COVID-19 Twitter Sentiment'),
+    html.H2('UK COVID-19 Twitter Sentiment GitHub'),
     dcc.Dropdown(
         id='dropdown',
         options=[{'label': i, 'value': i} for i in ['England', 'Wales', 'Scotland']],

@@ -12,7 +12,7 @@ server = app.server
 app.title = 'Sentiment Towards Lockdown in the UK'
 
 # Read data
-df_covid_stats = pd.read_csv('/Users/lily/PycharmProjects/web-app/data/COVID-Dataset/uk_covid_stats.csv')
+df_covid_stats = pd.read_csv('data/COVID-Dataset/uk_covid_stats.csv')
 
 # Make figures
 def generate_table(dataframe, max_rows=10):

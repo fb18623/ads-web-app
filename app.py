@@ -12,7 +12,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.title = 'Sentiment Towards Lockdown in the UK git test'
+app.title = 'Sentiment Towards Lockdown in the UK'
 
 app.layout = html.Div([
     html.H2('UK COVID-19 Twitter Sentiment GitHub'),
@@ -22,27 +22,6 @@ app.layout = html.Div([
         value='England'
     ),
     html.Div(id='display-value')
-])
-
-df = pd.DataFrame({
-    "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-    "Amount": [4, 1, 2, 2, 4, 5],
-    "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
-})
-
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
-
-app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
-
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
-
-    dcc.Graph(
-        id='example-graph',
-        figure=fig
-    )
 ])
 
 @app.callback(dash.dependencies.Output('display-value', 'children'),

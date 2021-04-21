@@ -21,6 +21,7 @@ df_covid_stats = pd.read_csv('data/COVID-Dataset/uk_covid_stats.csv')
 uk_counties = json.load(open('data/Geojson/uk_counties_simpler.json', 'r'))
 geo_df = pd.read_csv('data/year_data.csv')
 
+
 # Initial map
 # date = '2020-03-20'
 # geo_df = geo_df.loc[geo_df['date'] == date]

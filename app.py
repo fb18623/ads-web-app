@@ -22,8 +22,8 @@ uk_counties = json.load(open('data/Geojson/uk_counties_simpler.json', 'r'))
 geo_df = pd.read_csv('data/year_data.csv')
 
 # Initial map
-# date = '2020-03-20'
-# geo_df = geo_df.loc[geo_df['date'] == date]
+date = '2020-03-20'
+geo_df = geo_df.loc[geo_df['date'] == date]
 fig_0 = px.choropleth_mapbox(
     geo_df, 
     locations="id", 

@@ -25,21 +25,21 @@ geo_df = pd.read_csv('data/year_data.csv')
 date = '2020-03-20'
 geo_df = geo_df.loc[geo_df['date'] == date]
 fig_0 = px.choropleth_mapbox(
-    geo_df, 
-    locations="id", 
-    featureidkey='properties.id', 
+    geo_df,
+    locations="id",
+    featureidkey='properties.id',
     geojson=uk_counties,
-    color='sentiment', 
-    hover_name='county', 
-    mapbox_style='white-bg', 
+    color='sentiment',
+    hover_name='county',
+    mapbox_style='white-bg',
     color_continuous_scale=px.colors.diverging.Temps_r,
     zoom=5,
-    center={"lat": 55, "lon": 0}, 
+    center={"lat": 55, "lon": 0},
     animation_frame='date',
-    range_color=[-1,1]
-                           )
+    range_color=[-1, 1]
+)
 
-#  App Layout 
+#  App Layout
 app.layout = html.Div(
     id="root",
     children=[
@@ -49,11 +49,38 @@ app.layout = html.Div(
                 html.H4(children="Sentiment of Tweets about COVID-19 by UK region"),
             ],
         ),
+
         html.Div(
-           dcc.Graph(
-            id='example-graph-2',
-            figure=fig_0
-        )
+            id="slider-container",
+            children=[
+                html.P(
+                    id="slider-text",
+                    children="Drag the slider to change the week:",
+                ),
+                dcc.Slider(
+                    id="years-slider",
+                    min=0,
+                    max=365,
+                    value=0,
+                    marks={
+
+                    },
+                ),
+            ],
+        ),
+        
+        html.Div(
+            id="heatmap-container",
+            children=[
+                html.P(
+                    "Heatmap of sentiment towards lockdown in the UK week beginning DATE ",
+                    id="heatmap-title",
+                ),
+                dcc.Graph(
+                    id='example-graph-2',
+                    figure=fig_0
+                ),
+            ],
         ),
     ],
 )

@@ -16,6 +16,7 @@ norther_ireland = json.load(open('../data/Geojson/OSNI_Open_Data_-_50K_Boundarie
 area = {}  # Dictionary to map ID's from geojson data to a dataframe to plot
 counter = 0  # Counter to assign ID's
 name = 'NAME'  # Key that retrieves county names from geojson
+topic = 'lockdown'
 
 
 def add_missing_counties(uk_counties, extra_counties, name, norther_ireland):  # Adding cornwall and dorset to geojson
@@ -104,7 +105,7 @@ columns = ['date', region_header, predict_head]
 df = pd.read_csv(file_name, skipinitialspace=True, usecols=columns)
 sentiments = {'neg': -1, 'pos': 1, 'neu': 0}
 start_date = '2020-03-20'
-end_date = '2021-03-19'
+end_date = '2021-03-25'
 
 
 # Aggregating dataframe and county name changes
@@ -194,7 +195,7 @@ print('There are ' + str(len(geo_df['New County'].unique())) + ' different locat
 print('There are ' + str(len(geo_df[geo_df.viable == 0]['county'].unique())) + ' locations with unnassigned values.')
 print(geo_df[geo_df.viable == 0]['New County'].unique())
 
-geo_df.to_csv('year_data.csv')
+geo_df.to_csv('../data/{}_tweets.csv'.format(topic))
 # with open('uk_counties.json', 'w') as f:
 #     json.dump(uk_counties, f)
 # # -------- Plotting map ------- #

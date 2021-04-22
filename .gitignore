@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+data/Geojson/Ceremonial_counties.json
+data/Geojson/Counties_and_Unitary_Authorities_(December_2017)_Boundaries_in_the_UK_(WGS84) (1).json
+data/Geojson/OSNI_Open_Data_-_50K_Boundaries_-_NI_Counties.json

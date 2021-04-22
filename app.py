@@ -91,7 +91,7 @@ app.layout = html.Div(
                             id="heatmap-container",
                             children=[
                                 html.P(
-                                    "Heatmap of sentiment towards lockdown in the UK on day: ",
+                                    "Heatmap of sentiment towards COVID-19 in the UK on day: ",
                                     id="heatmap-title",
                                 ),
                                 dcc.Graph(

@@ -11,7 +11,7 @@ import datetime
 import plotly.graph_objects as go
 import json
 from dash.dependencies import Input, Output
-
+import plotly.figure_factory as ff
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -42,6 +42,12 @@ fig_0 = px.choropleth_mapbox(
     range_color=[-1, 1],
 )
 
+# initial news articles
+date = '2020-03-20'
+news_df = pd.read_csv('data/news_timeline.csv')
+news_df = news_df.loc[news_df['Date'] == date]
+news_fig = ff.create_table(news_df.drop('Date', 1))
+
 #  App Layout
 app.layout = html.Div(
     id="root",
@@ -49,7 +55,8 @@ app.layout = html.Div(
         html.Div(
             id="header",
             children=[
-                html.H4(children="Sentiment of Tweets about COVID-19 in the UK by County"),
+                html.H4(
+                    children="Sentiment of Tweets about COVID-19 in the UK by County"),
             ],
         ),
 
@@ -93,6 +100,18 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
+                    ],
+                ),
+                html.Div(
+                    id="daily-news",
+                    children=[
+                           html.H6(
+                    children="On this day in the news..."),
+                       dcc.Graph(
+                        id='news-table',
+                            figure=news_fig
+                        ),
+
                     ],
                 ),
                 html.Div(
@@ -160,6 +179,17 @@ def display_map(day):
         range_color=[-1, 1],
     )
     return fig
+
+@app.callback(
+    Output("news-table", "figure"),
+    [Input("days-slider", "value")],
+)
+def display_news(day):
+    date = str(dates_list[day].date())
+    news_df = pd.read_csv('data/news_timeline.csv')
+    news_df = news_df.loc[news_df['Date'] == date]
+    news_fig = ff.create_table(news_df.drop('Date', 1))
+    return(news_fig)
 
 if __name__ == '__main__':
     app.run_server(debug=True)

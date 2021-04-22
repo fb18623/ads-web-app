@@ -49,12 +49,6 @@ fig_0 = px.choropleth_mapbox(
     range_color=[-1, 1],
 )
 
-# initial news articles
-news_df = pd.read_csv('data/news_timeline.csv')
-news_df = news_df.loc[news_df['Date'] == date]
-news_fig = ff.create_table(news_df.drop('Date', 1))
-
-
 def df_to_table(df):
     return html.Table(
         # Header
@@ -278,18 +272,17 @@ app.layout = html.Div(
                 )
                 ,
                 html.Div(
-                    id="daily-news",
+                    
                     children=[
                         html.H6(
-                            children="On this day in the news..."
-                        ),
-                        dcc.Graph(
-                            id='news-table',
-                            figure=news_fig
-                        ),
-
+                               "Top News Stories",
+                                    ),
+                          dcc.Markdown(
+                                id="daily-news",
+                                style={"padding": "10px 13px 5px 13px", "marginBottom": "5"},
+                            )
                     ],
-                    className='row'
+                    className='pretty_container three columns'
                 ),
                 html.Div(children=[
                     html.Div(
@@ -461,15 +454,25 @@ def display_map(day):
 
 
 @app.callback(
-    Output("news-table", "figure"),
+    Output("daily-news", "children"),
     [Input("days-slider", "value")],
 )
 def display_news(day):
     date = str(dates_list[day].date())
     news_df = pd.read_csv('data/news_timeline.csv')
     news_df = news_df.loc[news_df['Date'] == date]
-    news_fig = ff.create_table(news_df.drop('Date', 1))
-    return (news_fig)
+    # news_fig = ff.create_table(news_df.drop('Date', 1))
+    # return df_to_table(news_df)
+    links = ''
+    for ind in news_df.index:
+        headline = news_df['Headline'][ind]
+        URL = news_df['URL'][ind]
+        link = '[**'+ headline + '**](' + URL + ') '
+        blank = '''
+
+        '''
+        links = links + blank +link
+    return(links)
 
 
 if __name__ == '__main__':

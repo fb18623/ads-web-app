@@ -16,7 +16,7 @@ import plotly.figure_factory as ff
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
-app.title = 'Sentiment Towards Lockdown in the UK'
+app.title = 'Sentiment Towards COVID-19 in the UK'
 
 # Read data
 df_covid_stats = pd.read_csv('data/COVID-Dataset/uk_covid_stats.csv')

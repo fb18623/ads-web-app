@@ -11,7 +11,7 @@ import datetime
 
 # -------- Plotting map ------- #
 uk_counties = json.load(open('uk_counties_simpler.json', 'r'))
-geo_df = pd.read_csv('year_data.csv')
+geo_df = pd.read_csv('covid_tweets.csv')
 start_time = datetime.datetime.now()
 print('Plotting ' + str(len(geo_df)) + ' points.')
 print('Plotting started')

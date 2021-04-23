@@ -18,7 +18,7 @@ counter = 0  # Counter to assign ID's
 name = 'NAME'  # Key that retrieves county names from geojson
 topic = 'lockdown'
 
-
+print('1')
 def add_missing_counties(uk_counties, extra_counties, name, norther_ireland):  # Adding cornwall and dorset to geojson
     extra_counties_needed = ['Dorset', 'Cornwall']
     for feature in extra_counties['features']:
@@ -82,7 +82,7 @@ key_map={'City and County of the City of London': 'Greater London',
          'LONDONDERRY': 'Derry and Londonderry'
         }
 
-
+print('2')
 # -------Welsh/Scottish county issue--------- #
 # The changing twitter location into suitable locations
 name_change_dict = {'Powys': ['Breconshire', 'Montgomeryshire', 'Radnorshire'],
@@ -98,7 +98,7 @@ name_change_dict = {'Powys': ['Breconshire', 'Montgomeryshire', 'Radnorshire'],
                     }
 
 # -------Dataframe-------------- #
-file_name = '../data/combined_weekly_tweets.csv'
+file_name = '../data/lockdown/daily_sentiment.csv'
 predict_head = 'nn-predictions'
 region_header = 'county'
 columns = ['date', region_header, predict_head]
@@ -144,7 +144,7 @@ def agg_df(df, name_change_dict, sentiments, geo_list, predict_head, region_head
 
 twitter_df = agg_df(df, name_change_dict, sentiments, geo_list, predict_head, region_header, start_date, end_date)
 
-
+print('3')
 # Creates a dataframe with all geojson locations
 def geojson_df(twitter_df, uk_counties, area, key_map, start_date, end_date, region_header):
     date_list = [str(date.date()) for date in pd.date_range(start=start_date, end=end_date).tolist()]
@@ -178,7 +178,7 @@ def geojson_df(twitter_df, uk_counties, area, key_map, start_date, end_date, reg
 
     return geo_df
 
-
+print('4')
 geo_df = geojson_df(twitter_df, uk_counties, area, key_map, start_date, end_date, region_header)
 geo_df = geo_df.sort_values('id')
 geo_df = geo_df.fillna(0)  # If a county doesn't exist within the twitter data it is given a NaN value. This makes it 0.
@@ -195,7 +195,7 @@ print('There are ' + str(len(geo_df['New County'].unique())) + ' different locat
 print('There are ' + str(len(geo_df[geo_df.viable == 0]['county'].unique())) + ' locations with unnassigned values.')
 print(geo_df[geo_df.viable == 0]['New County'].unique())
 
-geo_df.to_csv('../data/{}_tweets.csv'.format(topic))
+geo_df.to_csv('../data/lockdown_tweets.csv'.format(topic))
 # with open('uk_counties.json', 'w') as f:
 #     json.dump(uk_counties, f)
 # # -------- Plotting map ------- #

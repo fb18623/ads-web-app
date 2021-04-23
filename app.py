@@ -17,7 +17,7 @@ app.title = 'Sentiment Towards COVID-19 in the UK'
 # Read data
 df_covid_stats = pd.read_csv('data/COVID-Dataset/uk_covid_stats.csv')
 uk_counties = json.load(open('data/Geojson/uk_counties_simpler.json', 'r'))
-covid_geo_df = pd.read_csv('data/covid_tweets.csv')
+covid_geo_df = pd.read_csv('data/covid/county_daily_sentiment.csv')
 sentiments_df = pd.read_csv('data/{}/daily_sentiment.csv'.format(topic))
 hashtags_df = pd.read_csv('data/{}/top_ten_hashtags_per_day.csv'.format(topic))
 r_numbers = pd.read_csv('data/COVID-Dataset/r_numbers.csv')
@@ -395,7 +395,7 @@ def update_hashtag_table(selected_date):
 )
 def display_map(day):
     uk_counties = json.load(open('data/Geojson/uk_counties_simpler.json', 'r'))
-    geo_df = pd.read_csv('data/covid_tweets.csv')
+    geo_df = pd.read_csv('data/covid/county_daily_sentiment.csv')
     # Initial map
     date = str(dates_list[day].date())
     geo_df = geo_df.loc[geo_df['date'] == date]

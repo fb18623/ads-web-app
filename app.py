@@ -8,20 +8,24 @@ import plotly.graph_objects as go
 import json
 from dash.dependencies import Input, Output
 
-topic = 'covid'
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 app.title = 'Sentiment Towards COVID-19 in the UK'
 
-# Read data
+# GLOBAL VARS
+topic = 'covid'
+sentiment_version = 'nn'
+region_type = 'county'
+
+# READ DATA
 df_covid_stats = pd.read_csv('data/COVID-Dataset/uk_covid_stats.csv')
 uk_counties = json.load(open('data/Geojson/uk_counties_simpler.json', 'r'))
 covid_geo_df = pd.read_csv('data/covid/county_daily_sentiment.csv')
 sentiments_df = pd.read_csv('data/{}/daily_sentiment.csv'.format(topic))
 hashtags_df = pd.read_csv('data/{}/top_ten_hashtags_per_day.csv'.format(topic))
 r_numbers = pd.read_csv('data/COVID-Dataset/r_numbers.csv')
-# twitter_geo_df = pd.read_csv() - choose lockdown df
+
 dates_list = pd.date_range(start="2020-03-20", end="2021-03-25").tolist()
 weeks = r_numbers['date'].tolist()
 week_pairs = [(weeks[i], weeks[i + 1]) for i in range(0, len(weeks) - 1)]
@@ -107,8 +111,8 @@ def filters():
                 dcc.Dropdown(
                     id="heatmap_dropdown",
                     options=[
-                        {"label": "Counties", "value": "counties"},
-                        {"label": "Countries", "value": "countries"}
+                        {"label": "Counties", "value": "county"},
+                        {"label": "Countries", "value": "country"}
                     ],
                     value="counties",
                     clearable=False,
@@ -422,7 +426,7 @@ def display_map(day):
 )
 def display_news(day):
     date = str(dates_list[day].date())
-    news_df = pd.read_csv('data/news_timeline.csv')
+    news_df = pd.read_csv('data/events/news_timeline.csv')
     news_df = news_df.loc[news_df['Date'] == date]
     # news_fig = ff.create_table(news_df.drop('Date', 1))
     # return df_to_table(news_df)

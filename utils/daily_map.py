@@ -142,9 +142,6 @@ def agg_df(df, name_change_dict, sentiments, geo_list, predict_head, region_head
     return twitter_df
 
 
-twitter_df = agg_df(df, name_change_dict, sentiments, geo_list, predict_head, region_header, start_date, end_date)
-
-print('3')
 # Creates a dataframe with all geojson locations
 def geojson_df(twitter_df, uk_counties, area, key_map, start_date, end_date, region_header):
     date_list = [str(date.date()) for date in pd.date_range(start=start_date, end=end_date).tolist()]
@@ -178,24 +175,25 @@ def geojson_df(twitter_df, uk_counties, area, key_map, start_date, end_date, reg
 
     return geo_df
 
-print('4')
-geo_df = geojson_df(twitter_df, uk_counties, area, key_map, start_date, end_date, region_header)
-geo_df = geo_df.sort_values('id')
-geo_df = geo_df.fillna(0)  # If a county doesn't exist within the twitter data it is given a NaN value. This makes it 0.
-print(geo_df.head())
-geo_df.drop(columns=['New County', 'viable'])
-print(geo_df.tail())
+def create_geo_df():
+    twitter_df = agg_df(df, name_change_dict, sentiments, geo_list, predict_head, region_header, start_date, end_date)
+    geo_df = geojson_df(twitter_df, uk_counties, area, key_map, start_date, end_date, region_header)
+    geo_df = geo_df.sort_values('id')
+    geo_df = geo_df.fillna(0)  # If a county doesn't exist within the twitter data it is given a NaN value. This makes it 0.
+    print(geo_df.head())
+    geo_df.drop(columns=['New County', 'viable'])
+    print(geo_df.tail())
 
-twitter_df = twitter_df.sort_values('county')
+    twitter_df = twitter_df.sort_values('county')
 
-# Unassigned values mean there should exist a county within the twitter data for which the geo location can relate.
-print('There are ' + str(len(twitter_df[twitter_df.used == 0]['county'].unique())) + ' locations not used within the twitter data')
-print(twitter_df[twitter_df.used == 0]['county'].unique())
-print('There are ' + str(len(geo_df['New County'].unique())) + ' different locations within the geojson data')
-print('There are ' + str(len(geo_df[geo_df.viable == 0]['county'].unique())) + ' locations with unnassigned values.')
-print(geo_df[geo_df.viable == 0]['New County'].unique())
+    # Unassigned values mean there should exist a county within the twitter data for which the geo location can relate.
+    print('There are ' + str(len(twitter_df[twitter_df.used == 0]['county'].unique())) + ' locations not used within the twitter data')
+    print(twitter_df[twitter_df.used == 0]['county'].unique())
+    print('There are ' + str(len(geo_df['New County'].unique())) + ' different locations within the geojson data')
+    print('There are ' + str(len(geo_df[geo_df.viable == 0]['county'].unique())) + ' locations with unnassigned values.')
+    print(geo_df[geo_df.viable == 0]['New County'].unique())
 
-geo_df.to_csv('../data/lockdown_tweets.csv'.format(topic))
+    geo_df.to_csv('../data/lockdown_tweets.csv'.format(topic))
 # with open('uk_counties.json', 'w') as f:
 #     json.dump(uk_counties, f)
 # # -------- Plotting map ------- #

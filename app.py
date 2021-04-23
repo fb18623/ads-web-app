@@ -1,17 +1,12 @@
-import os
 import dash
 import re
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
 import pandas as pd
-import json
-import numpy as np
-import datetime
 import plotly.graph_objects as go
 import json
 from dash.dependencies import Input, Output
-import plotly.figure_factory as ff
 
 topic = 'covid'
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -153,38 +148,6 @@ def filters():
     )
 
 
-# @app.callback(
-#     Output("total_cases_indicator", "children"),
-#     [Input("opportunities_df", "children")],
-# )
-# def total_cases_indicator_callback(df):
-#     df = pd.read_json(df, orient="split")
-#     won = str(df[df["IsWon"] == 1]["Amount"].sum())
-#     return won
-#
-#
-# # updates middle indicator value based on df updates
-# @app.callback(
-#     Output("r_number_indicator", "children"),
-#     [Input("opportunities_df", "children")],
-# )
-# def r_number_indicator_callback(df):
-#     df = pd.read_json(df, orient="split")
-#     active = str(df[(df["IsClosed"] == 0)]["Amount"].sum())
-#     return active
-#
-#
-# # updates right indicator value based on df updates
-# @app.callback(
-#     Output("total_deaths_indicator", "children"),
-#     [Input("opportunities_df", "children")],
-# )
-# def total_deaths_indicator_callback(df):
-#     df = pd.read_json(df, orient="split")
-#     lost = str(df[(df["IsWon"] == 0) & (df["IsClosed"] == 1)]["Amount"].sum())
-#     return lost
-
-
 #  App Layout
 app.layout = html.Div(
     id="root",
@@ -311,32 +274,32 @@ app.layout = html.Div(
 
                             ),
                         ],
-                        className='pretty_container ten columns'
+                        className='pretty_container twelve columns'
                     ),
-                    html.Div(
-                        [
-                            html.P(
-                                "Top 10 Hashtags",
-                                style={
-                                    "color": "#2a3f5f",
-                                    "fontSize": "13px",
-                                    "textAlign": "center",
-                                    "marginBottom": "0",
-                                },
-                            ),
-                            html.Div(
-                                id="hashtags_table",
-                                style={"padding": "10px 13px 5px 13px", "marginBottom": "5"},
-                            ),
-                        ],
-                        className="pretty_container three columns",
-                        style={
-                            "backgroundColor": "white",
-                            "border": "1px solid #C8D4E3",
-                            "borderRadius": "10px",
-                            "height": "100%"
-                        },
-                    ),
+                    # html.Div(
+                    #     [
+                    #         html.P(
+                    #             "Top 10 Hashtags",
+                    #             style={
+                    #                 "color": "#2a3f5f",
+                    #                 "fontSize": "13px",
+                    #                 "textAlign": "center",
+                    #                 "marginBottom": "0",
+                    #             },
+                    #         ),
+                    #         html.Div(
+                    #             id="hashtags_table",
+                    #             style={"padding": "10px 13px 5px 13px", "marginBottom": "5"},
+                    #         ),
+                    #     ],
+                    #     className="pretty_container three columns",
+                    #     style={
+                    #         "backgroundColor": "white",
+                    #         "border": "1px solid #C8D4E3",
+                    #         "borderRadius": "10px",
+                    #         "height": "100%"
+                    #     },
+                    # ),
                 ],
                     className='row'
                 )
@@ -477,3 +440,6 @@ def display_news(day):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+
+##TODO

@@ -4,8 +4,6 @@ score_columns = ['nn-score', 'vader-score', 'textblob-score']
 prediction_columns = ['nn-predictions', 'vader-predictions', 'textblob-predictions']
 sentiments = {'neg': -1, 'pos': 1, 'neu': 0}
 
-sen
-
 def aggregate_sentiment_by_region_type_by_date(data, region_list, region_header,
                                                start,
                                                end):

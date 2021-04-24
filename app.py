@@ -7,32 +7,43 @@ import pandas as pd
 import plotly.graph_objects as go
 import json
 from dash.dependencies import Input, Output
+from utils.daily_deaths_vs_sentiment import create_event_array
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 app.title = 'Sentiment Towards COVID-19 in the UK'
 
-# GLOBAL VARS
-topic = 'covid'
-sentiment_version = 'nn'
-region_type = 'county'
-
 # READ DATA
-df_covid_stats = pd.read_csv('data/COVID-Dataset/uk_covid_stats.csv')
+df_covid_stats = pd.read_csv('data/COVID-Dataset/uk_covid_stats.csv', skipinitialspace=True, )
 uk_counties = json.load(open('data/Geojson/uk_counties_simpler.json', 'r'))
 covid_geo_df = pd.read_csv('data/covid/county_daily_sentiment.csv')
-sentiments_df = pd.read_csv('data/{}/daily_sentiment.csv'.format(topic))
-hashtags_df = pd.read_csv('data/{}/top_ten_hashtags_per_day.csv'.format(topic))
 r_numbers = pd.read_csv('data/COVID-Dataset/r_numbers.csv')
+df_events = pd.read_csv('data/events/key_events.csv', skipinitialspace=True, usecols=['Date', 'Event'])
+# Data Sources
+hashtag_data_sources = {'covid': pd.read_csv('data/covid/top_ten_hashtags_per_day.csv'),
+                        'lockdown': pd.read_csv('data/lockdown/top_ten_hashtags_per_day.csv')}
+sentiment_data_sources = {'covid': pd.read_csv('data/covid/all_tweet_sentiments.csv'),
+                          'lockdown': pd.read_csv('data/lockdown/all_tweet_sentiments.csv')}
+sentiment_dropdown_value_to_score = {'nn': 'nn-predictions_avg_score', 'textblob': 'textblob-predictions_avg_score',
+                                      'vader': 'vader-predictions_avg_score'}
+sentiment_dropdown_value_to_labels = {'nn': 'nn-predictions', 'textblob': 'textblob-predictions',
+                                      'vader': 'vader-predictions'}
+tweet_counts_sources = {'covid': pd.read_csv('data/covid/daily_tweet_count_country.csv'),
+                        'lockdown': pd.read_csv('data/lockdown/daily_tweet_count_country.csv')}
 
-dates_list = pd.date_range(start="2020-03-20", end="2021-03-25").tolist()
+# Dates
 weeks = r_numbers['date'].tolist()
 week_pairs = [(weeks[i], weeks[i + 1]) for i in range(0, len(weeks) - 1)]
+start_global = '2020-03-20'
+end_global = '2021-03-19'
+dates_list = pd.date_range(start=start_global, end=end_global).tolist()
+
+#
+events_array = create_event_array(df_events, start_global, end_global)
 
 # Initial map
-date = '2020-03-20'
-covid_geo_df = covid_geo_df.loc[covid_geo_df['date'] == date]
+covid_geo_df = covid_geo_df.loc[covid_geo_df['date'] == start_global]
 fig_0 = px.choropleth_mapbox(
     covid_geo_df,
     locations="id",
@@ -47,6 +58,7 @@ fig_0 = px.choropleth_mapbox(
     animation_frame='date',
     range_color=[-1, 1],
 )
+
 
 def df_to_table(df):
     return html.Table(
@@ -107,7 +119,7 @@ def filters():
     return html.Div(
         [
             html.Div(children=[
-                html.P(id='region-selected', children='Select Region Type'),
+                html.P(id='region-selected', children='Select Region Grouping'),
                 dcc.Dropdown(
                     id="heatmap_dropdown",
                     options=[
@@ -122,7 +134,7 @@ def filters():
             html.Div(children=[
                 html.P(id='data-selected', children='Select Tweet Data-set '),
                 dcc.Dropdown(
-                    id="source_dropdown",
+                    id="source-dropdown",
                     options=[
                         {"label": "COVID", "value": "covid"},
                         {"label": "Lockdown", "value": "lockdown"}
@@ -135,7 +147,7 @@ def filters():
             html.Div(children=[
                 html.P(id='nlp-selected', children='Select NLP Technique'),
                 dcc.Dropdown(
-                    id="nlp_dropdown",
+                    id="nlp-dropdown",
                     options=[
                         {"label": "Vader", "value": "vader"},
                         {"label": "Text Blob", "value": "textblob"},
@@ -239,15 +251,15 @@ app.layout = html.Div(
                 )
                 ,
                 html.Div(
-                    
+
                     children=[
                         html.H6(
-                               "Top News Stories",
-                                    ),
-                          dcc.Markdown(
-                                id="daily-news",
-                                style={"padding": "10px 13px 5px 13px", "marginBottom": "5"},
-                            )
+                            "Top News Stories",
+                        ),
+                        dcc.Markdown(
+                            id="daily-news",
+                            style={"padding": "10px 13px 5px 13px", "marginBottom": "5"},
+                        )
                     ],
                     className='pretty_container three columns'
                 ),
@@ -255,7 +267,7 @@ app.layout = html.Div(
                     html.Div(
                         id="graph-container",
                         children=[
-                            html.P(id="chart-selector", children="Select chart:"),
+                            html.P(id="chart-selector", children="Select Animated Charts:"),
                             dcc.Dropdown(
                                 options=[
                                     {
@@ -345,21 +357,23 @@ def update_date_box(selected_date):
     return dates_list[selected_date].date()
 
 
-@app.callback(Output("heatmap-title", "children"), [Input("days-slider", "value")])
-def update_map_title(selected_date):
-    return "Heatmap of sentiment towards lockdown in the UK on the day: {0}".format(
-        dates_list[selected_date].date()
-    )
+@app.callback(Output("heatmap-title", "children"), [Input("days-slider", "value"), Input('source-dropdown', 'value')])
+def update_map_title(selected_date, source):
+    return "Heatmap of Sentiment Within {} Related Tweets in the UK. Date: {}".format(source,
+                                                                                      dates_list[
+                                                                                          selected_date].date()
+                                                                                      )
 
 
 @app.callback(
     Output('sentiment_bar_chart', 'figure'),
-    [Input("days-slider", "value")]
+    [Input("days-slider", "value"), Input('source-dropdown', 'value'), Input('nlp-dropdown', 'value')]
 )
-def update_bar_chart(selected_date):
-    sentiments_df['date'] = pd.to_datetime(sentiments_df['date']).dt.date
-    df = sentiments_df[sentiments_df['date'] == dates_list[selected_date]]
-    label = 'textblob-predictions'
+def update_bar_chart(selected_date, source, nlp):
+    data = sentiment_data_sources[source]
+    data['date'] = pd.to_datetime(data['date']).dt.date
+    df = data[data['date'] == dates_list[selected_date]]
+    label = sentiment_dropdown_value_to_labels[nlp]
     countries = ['England', 'Scotland', 'Northern Ireland', 'Wales']
     sentiment_labels = ['neg', 'neu', 'pos']
     sentiment_dict = {
@@ -380,15 +394,16 @@ def update_bar_chart(selected_date):
 
 @app.callback(
     Output('hashtags_table', 'children'),
-    [Input("days-slider", "value")]
+    [Input("days-slider", "value"), Input('source-dropdown', 'value')]
 )
-def update_hashtag_table(selected_date):
+def update_hashtag_table(selected_date, source):
     selected_date = str(dates_list[selected_date].date())
+    hashtags_df = hashtag_data_sources[source]
     hashtag_date = hashtags_df.loc[hashtags_df['date'] == selected_date]
     hashtags = [tuple(x.split(',')) for x in re.findall("\((.*?)\)", hashtag_date['top_ten_hashtags'].values[0])]
     hash_dict = {'Hashtag': [], 'Count': []}
     for hashtag, count in hashtags:
-        hash_dict['Hashtag'].append('#'+hashtag.replace("'", ''))
+        hash_dict['Hashtag'].append('#' + hashtag.replace("'", ''))
         hash_dict['Count'].append(count)
     return df_to_table(pd.DataFrame(hash_dict))
 
@@ -434,16 +449,15 @@ def display_news(day):
     for ind in news_df.index:
         headline = news_df['Headline'][ind]
         URL = news_df['URL'][ind]
-        link = '[**'+ headline + '**](' + URL + ') '
+        link = '[**' + headline + '**](' + URL + ') '
         blank = '''
 
         '''
-        links = links + blank +link
-    return(links)
+        links = links + blank + link
+    return (links)
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
 
 ##TODO

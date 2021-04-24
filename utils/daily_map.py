@@ -193,7 +193,7 @@ def create_geo_df():
     print('There are ' + str(len(geo_df[geo_df.viable == 0]['county'].unique())) + ' locations with unnassigned values.')
     print(geo_df[geo_df.viable == 0]['New County'].unique())
 
-    geo_df.to_csv('../data/lockdown_tweets.csv'.format(topic))
+    geo_df.to_csv('../data/{}}_tweets.csv'.format(topic))
 # with open('uk_counties.json', 'w') as f:
 #     json.dump(uk_counties, f)
 # # -------- Plotting map ------- #

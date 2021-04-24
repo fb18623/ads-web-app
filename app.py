@@ -405,7 +405,8 @@ def update_hashtag_table(selected_date, source):
     for hashtag, count in hashtags:
         hash_dict['Hashtag'].append('#' + hashtag.replace("'", ''))
         hash_dict['Count'].append(count)
-    return df_to_table(pd.DataFrame(hash_dict))
+        fig = px.bar(pd.DataFrame(hash_dict), x='hashtag', y='count', color='hashtag')
+    return fig
 
 
 @app.callback(
